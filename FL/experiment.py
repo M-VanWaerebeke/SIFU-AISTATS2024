@@ -145,7 +145,11 @@ class Experiment:
             else:
                 path_file = f"saved_exp_info/{variable}/{self.file_name}.pkl"
             arr_var = getattr(server, variable)
-            max_server_agg = np.max(np.where(getattr(server, "acc")>0)[1])
+            # Preserve measurements even if classification accuracy is zero.
+            measured = np.any((server.loss != 0) | (server.acc != 0), axis=(0, 2))
+            indices = np.flatnonzero(measured)
+            max_server_agg = max(server.t, int(indices[-1]) if len(indices) else 0)
+            os.makedirs(os.path.dirname(path_file), exist_ok=True)
             with open(path_file, "wb") as output:
                 pickle.dump(arr_var[:, :max_server_agg+1], output)
 
@@ -154,11 +158,13 @@ class Experiment:
             path_file = f"limit_iter_saved/final_model/{self.file_name}-limit{self.limit_train_iter}.pth"
         else:
             path_file = f"saved_exp_info/final_model/{self.file_name}.pth"
+        os.makedirs(os.path.dirname(path_file), exist_ok=True)
         torch.save(model.state_dict(), path_file)
 
     def save_best_models(self, file_name: str, l_models: list[Module]):
         for i, model in enumerate(l_models):
             path_file = f"saved_exp_info/final_model/{file_name}_{i}.pth"
+            os.makedirs(os.path.dirname(path_file), exist_ok=True)
             torch.save(model.state_dict(), path_file)
 
     def save_psi_bound(self, psi_bounds: list):

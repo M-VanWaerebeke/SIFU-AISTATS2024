@@ -3,6 +3,8 @@
 
 import argparse
 import torch
+import random
+import numpy as np
 
 from FL.experiment import Experiment
 from FL.server import Server
@@ -72,6 +74,9 @@ parser.add_argument(
 if __name__ == "__main__":
 
     args = vars(parser.parse_args())
+    random.seed(args["seed"])
+    np.random.seed(args["seed"])
+    torch.manual_seed(args["seed"])
 
     # CREATE EXP OBJECT
     exp = Experiment(args)

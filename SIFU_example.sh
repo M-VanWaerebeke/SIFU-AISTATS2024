@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+scheme="SIFU"
+
 # This script can be used to reproduce the performances of SIFU on CIFAR10 for Figure 2 of our paper.
 
 # First one run without parallelization in case the data is not downloaded at launch

@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "Please cite the AISTATS 2024 paper when using this research software."
+type: software
+title: "SIFU: Sequential Informed Federated Unlearning"
+authors:
+  - family-names: Fraboni
+    given-names: Yann
+  - family-names: Van Waerebeke
+    given-names: Martin
+  - family-names: Scaman
+    given-names: Kevin
+  - family-names: Vidal
+    given-names: Richard
+  - family-names: Kameni
+    given-names: Laetitia
+  - family-names: Lorenzi
+    given-names: Marco
+repository-code: "https://github.com/M-VanWaerebeke/SIFU-AISTATS2024"
+url: "https://proceedings.mlr.press/v238/fraboni24a.html"
+preferred-citation:
+  type: conference-paper
+  title: "SIFU: Sequential Informed Federated Unlearning for Efficient and Provable Client Unlearning in Federated Optimization"
+  authors:
+    - family-names: Fraboni
+      given-names: Yann
+    - family-names: Van Waerebeke
+      given-names: Martin
+    - family-names: Scaman
+      given-names: Kevin
+    - family-names: Vidal
+      given-names: Richard
+    - family-names: Kameni
+      given-names: Laetitia
+    - family-names: Lorenzi
+      given-names: Marco
+  year: 2024
+  collection-title: "Proceedings of the 27th International Conference on Artificial Intelligence and Statistics"
+  volume: 238
+  start: 3457
+  end: 3465
+  publisher:
+    name: PMLR
+  url: "https://proceedings.mlr.press/v238/fraboni24a.html"

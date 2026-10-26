@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv*/
+.pytest_cache/
+data/*
+!data/.gitkeep
+saved_exp_info/
+limit_iter_saved/
+saved_exp_SIFU_bound*/
+figures/*
+!figures/.gitkeep
+
+demo-output/

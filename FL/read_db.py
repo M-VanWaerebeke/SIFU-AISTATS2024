@@ -47,6 +47,7 @@ def create_pkl_files_dirichlet(
     elif dataset_name[:12] == "FashionMNIST":
         db = datasets.FashionMNIST(root='./data', train=train, download=True)
 
+    os.makedirs("data", exist_ok=True)
     save_name = f"{dataset_name}_M{n_clients}"
     if train:
         save_name += "_train"
@@ -373,7 +374,21 @@ def get_dataloaders(
     torch.manual_seed(0)
 
 
-    if dataset_name.split("_")[0] in \
+    if dataset_name == "synthetic":
+        if n_clients < 3:
+            raise ValueError("synthetic requires at least three clients")
+        dls_train, dls_test = [], []
+        for client_id in range(n_clients):
+            generator = torch.Generator().manual_seed(1729 + client_id)
+            labels = torch.arange(20) % 10
+            features = torch.randn(20, 1, 28, 28, generator=generator) * 0.1
+            # A shared class signal makes this a small, learnable classification task.
+            features.view(20, -1)[torch.arange(20), labels] += 2.0
+            dataset = torch.utils.data.TensorDataset(features, labels)
+            dls_train.append(DataLoader(dataset, batch_size=batch_size, shuffle=True))
+            dls_test.append(DataLoader(dataset, batch_size=batch_size, shuffle=False))
+
+    elif dataset_name.split("_")[0] in \
             ["MNIST-shard", "CIFAR10", "CIFAR100", "FashionMNIST"]:
 
         name_split = dataset_name.split("_")
@@ -431,6 +446,10 @@ def get_dataloaders(
 
 
 
+    else:
+        raise ValueError(f"Unsupported dataset: {dataset_name}")
+
+    os.makedirs("saved_exp_info/len_dbs", exist_ok=True)
     # Save in a file the number of samples owned per client
     list_len = [len(dl.dataset) for dl in dls_train]
     with open(f"./saved_exp_info/len_dbs/{dataset_name}_M{n_clients}.pkl", "wb") as output:

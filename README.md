@@ -1,48 +1,58 @@
-## Sequential Informed Federated Unlearning: Efficient and Provable Client Unlearning in Federated Optimization
+# SIFU — Sequential Informed Federated Unlearning
 
-This paper can be found [here](https://arxiv.org/abs/2211.11656).
+Research implementation for **SIFU: Sequential Informed Federated Unlearning for Efficient and Provable Client Unlearning in Federated Optimization**, AISTATS 2024.
 
-### Download the Dependencies
+[Paper and citation](https://proceedings.mlr.press/v238/fraboni24a.html) · [Original collaborative repository](https://github.com/Accenture/Labs-Federated-Learning/tree/SIFU) · [Experiment parameters](docs/experiment-parameters.md)
 
-This work is done using Python 3.9 and PyTorch 1.11.0.
+SIFU removes a client's contribution from a federated model by choosing a suitable earlier model, adding calibrated noise, and resuming optimization with the remaining clients. The implementation includes SIFU and comparison methods such as retraining, fine-tuning, FedEraser and FedAccum.
 
+Authors: Yann Fraboni, Martin Van Waerebeke, Kevin Scaman, Richard Vidal, Laetitia Kameni and Marco Lorenzi. Yann Fraboni and Martin Van Waerebeke contributed equally to the paper.
 
-### `FU.py` and its Inputs
+## Quick start: an offline CPU example
 
-`FU.py` is the function used for any FU simulation with specificities resulting from its input parameters described hereafter:
-- `dataset_name`: the dataset name considered composed of up to three elements separated by underscore "_":
-  the public dataset considered (`MNIST`, `FashionMNIST`, `CIFAR10`, `CIFAR100`, `celeba`), 
-  the dirichlet distribution parameter as a float,
-  and the string `backdoored` if each client's data is watermarked,
-  We note that no dirichlet distribution follows the dataset CelebA as its partitioning is independent of this work.
-  For example, `CIFAR10_0.1_backdoored` clients have 100 watermarked data points sampled from CIFAR10 
-  with class ratio randomly obtained with a Dirichlet distribution of parameter 0.1. Other examples, `celeba`, `MNIST_0._backdoored`, `CIFAR100_1.`
-- `unlearn_scheme`: the 7 unlearning schemes considered `SIFU`, `scratch`, `fine-tuning`, `DP_X`, `last`, `FedEraser` and `FedAccum`.
-    We note that the training with every client is identical for `SIFU`, `scratch`, `last`, and `fine-tuning`, which we thus obtain with `train`.
-    Also, the `X` in `DP_X` is the clipping constant of a client's contribution, e.g. `DP_0.2`.
-- `model`: the model architecture considered, `default` for MNIST and `CNN` for every other dataset,
-- `forgetting`: the string giving the associated unlearning request saved in `policy.py` and set to `P70` for Figure 2, and `P9` for Figure 3,
-- `T`: the maximal allowed ammount of aggregation rounds, set to 10 000 in our experiments,
-- `B`: the amount of data samples considered for each SGD (batch size),
-- `n_SGD`: the amount of local SGD ran by each client between each aggregation round,
-- `n_SGD_cali`: only relevant for `FedEraser`, the number of local SGD steps used for retraining, defaults to half of n_SGD
-- `delta_t`: only relevant for `FedEraser`, the amount of time between two calibration steps,
-- `lr_g`: the server aggregation learning rate set to 1 in our experiments,
-- `lr_l`: the local learning rate used by clients to perform their local work,
-- `M`: the amount of participating clients set to 100 in our experiments,
-- `n_sampled`: the amount of sampled clients at each epoch,
-- `clip`: the gradient clipping used in training,
-- `epsilon`: the unlearning budget for `SIFU`, `last`, and `DP_X`,
-- `sigma`: the noise perturbation parameter for `SIFU`,
-- `stop_acc`: the stopping accuracy of the training or retraining for the global model,
-- `seed`: the seed used to initialize the global model,
-- `iter_min`: the minimal amount of iterations before stopping the training or retraining for the global model,
-- `compute_diff`: used to compute additional informations about gradient norm, required for `FedEraser` and `FedAccum`,
-- `device`: the device used for the experiment.
+The example trains a small linear classifier across four synthetic clients, then runs the actual SIFU code to forget client 0. No image datasets, GPU, account or checkpoint download is needed.
 
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python examples/cpu_demo.py --output-dir demo-output
+python -m pytest -q
+```
 
-### Running the Experiments
-Running the experiments is done by calling the function `FU.py` with the desired input parameters.
-Before unlearning, it is necessary to first train the initial model by using the argument `train` for `unlearn_scheme`.
-For instance, to run the unlearning with SIFU on CIFAR10 presented in Figure 2, one can launch the experiments with the script SIFU_example.sh.
-Note that the script uses parallelization that might need to be removed if not supported by the system.
+Run these commands from the repository root. The example performs four training rounds followed by four unlearning rounds, writes model checkpoints and histories under `demo-output/saved_exp_info/`, and produces `demo-output/summary.json`. Its expected summary contains `clients_before: 4`, `forgotten_clients: [0]` and `clients_after: 3`. It checks execution, rather than reproducing the paper's performance or verifying its theoretical guarantees.
+
+The supported CPU checks were run with Python 3.9.6, PyTorch 2.8.0, torchvision 0.23.0 and NumPy 2.0.2. The paper originally used Python 3.9 and PyTorch 1.11.0. The requirements describe the currently checked execution environment; equivalence to the original full benchmark has not been established.
+
+## Paper experiments
+
+`FU.py` provides the experiment command line. It first needs a `train` run with the same model and training parameters before a `SIFU` run can load the saved model. See the [full parameter reference](docs/experiment-parameters.md).
+
+```bash
+bash SIFU_example.sh
+```
+
+This is the historical CIFAR-10 Figure 2 experiment recipe, using 100 clients, ten seeds and up to 10,000 rounds. It downloads CIFAR-10 and launches multiple processes; inspect the script and resource requirements before using it on a shared machine. The offline example above is the small supported starting point. Full paper experiments have not been rerun during this maintenance update.
+
+The historical experiment reports training-client metrics; these should not be described as held-out test accuracy. Dataset acquisition and partitioning are implemented in `FL/read_db.py`. CelebA additionally requires its own data access/download setup.
+
+## Code map
+
+| Path | Purpose |
+| --- | --- |
+| `FU.py` | Train and unlearn entrypoint |
+| `FL/server.py`, `FL/branch.py` | Aggregation, unlearning metric and model rewind |
+| `FL/client.py` | Client SGD updates |
+| `FL/read_db.py`, `FL/create_model.py` | Data partitions and models |
+| `FedAccum/` | FedAccum/FedEraser comparison implementation |
+| `policy.py` | Client-removal request sequences |
+| `tests/` | Supported offline regression and integration checks |
+| `test/` | Historical tests targeting earlier interfaces; retained for provenance |
+
+## Contribution and provenance
+
+This repository remains a fork of Accenture's collaborative federated-learning code. Its history records earlier implementation by Yann Fraboni and contributions under his other commit identity. Martin Van Waerebeke's historical GitHub identity, `Mart1vw`, authored the [AISTATS 2024 code update](https://github.com/M-VanWaerebeke/SIFU-AISTATS2024/commit/e940485948791cda9bc05fb4f9e199d95d3f68e4), which updated client/server routines, models, data handling, experiment recording and the reproduction script, followed by cleanup commits. These records demonstrate specific implementation contributions; the work is collaborative.
+
+The release maintenance adds an offline example, regression checks, explicit dependency versions and fixes for output creation and the experiment script. This is research software, with the checked scope described above. The repository has no explicit software license; this maintenance update does not add one or change the upstream licensing status. Please contact the authors about reuse terms.
+
+If using the research, cite the published paper; machine-readable metadata is in [CITATION.cff](CITATION.cff).

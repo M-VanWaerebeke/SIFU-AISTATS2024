@@ -186,7 +186,7 @@ def load_model(dataset_name: str, model_type: str="default", seed: int =42):
 
     dataset = dataset_name.split("_")[0]
 
-    if dataset in ["MNIST", "MNIST-shard"]:
+    if dataset in ["MNIST", "MNIST-shard", "synthetic"]:
         model = LogisticRegression(784, 10)
         loss_f = torch.nn.CrossEntropyLoss()
 
