@@ -1,20 +1,13 @@
-# Accenture Labs Sophia Antipolis Publications and Associated Code on Federated Learning
+# SIFU — AISTATS 2024
 
-- Yann Fraboni, Richard Vidal, Marco Lorenzi. Free-rider Attacks on Model Aggregation in Federated Learning. *AISTATS 2021*
-    - The paper can be found [here](http://proceedings.mlr.press/v130/fraboni21a.html).
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/free-rider_attacks).   
-- Yann Fraboni, Richard Vidal, Laetitia Kameni, Marco Lorenzi. Clustered Sampling: Low-Variance and Improved Representativity for Clients Selection in Federated Learning. *ICML 2021*
-    - The paper can be found [here](http://proceedings.mlr.press/v139/fraboni21a.html).
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/clustered_sampling).  
-- Yann Fraboni, Richard Vidal, Laetitia Kameni, Marco Lorenzi. A General Theory for Client Sampling in Federated Learning. *FL-IJCAI'22*
-    - The paper can be found [here](https://arxiv.org/abs/2107.12211).
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/impact_client_sampling).
-- Yann Fraboni, Richard Vidal, Laetitia Kameni, Marco Lorenzi. A General Theory for Federated Optimization with Asynchronous and Heterogeneous Clients Updates. *JMLR 2023*
-    - The paper can be found [here](https://arxiv.org/abs/2206.10189).
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/asynchronous_FL).
-- Yann Fraboni, Martin Van Waerebeke, Richard Vidal, Laetitia Kameni, Kevin Scaman, Marco Lorenzi. Sequential Informed Federated Unlearning: Efficient and Provable Client Unlearning in Federated Optimization. Preprint.
-    - The paper can be found [here](https://arxiv.org/abs/2211.11656).
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/SIFU).
-- Yann Fraboni, Lucia Innocenti,Michela Antonelli, Richard Vidal, Laetitia Kameni, Sebastien Ourselin, Marco Lorenzi. Validation of Federated Learning on Collaborative Prostate Segmentation. *MICCAI 2023 - DeCaF*
-    - The paper can be found [here]().
-    - The code can be found [here](https://github.com/Accenture/Labs-Federated-Learning/tree/FU_prostate_segmentation).
+**Sequential Informed Federated Unlearning for Efficient and Provable Client Unlearning in Federated Optimization**
+
+[Open the code, installation instructions and CPU example →](https://github.com/M-VanWaerebeke/SIFU-AISTATS2024/tree/SIFU)
+
+[Published paper and citation](https://proceedings.mlr.press/v238/fraboni24a.html) · [Original collaborative repository](https://github.com/Accenture/Labs-Federated-Learning/tree/SIFU)
+
+SIFU removes a client's contribution from a federated model through model rewind, calibrated noise and resumed optimization. The `SIFU` branch contains the research implementation, a small offline train-and-unlearn example, dependency specifications and regression checks.
+
+Authors: Yann Fraboni, Martin Van Waerebeke, Kevin Scaman, Richard Vidal, Laetitia Kameni and Marco Lorenzi. Yann Fraboni and Martin Van Waerebeke contributed equally to the paper.
+
+This repository is a fork of Accenture's collaborative federated-learning code. Martin's historical `Mart1vw` commits include the AISTATS 2024 implementation update and code cleanup; the work retains its collaborative provenance. See the supported branch's README for the checked execution scope and licensing status.
